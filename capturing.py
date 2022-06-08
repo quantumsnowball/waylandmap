@@ -1,0 +1,58 @@
+import sys
+import traceback
+import evdev
+import uinput
+
+
+KEYS = {k:v
+        for k,v in uinput.__dict__.items() 
+        if k.startswith('KEY_')}
+
+
+KEY_VALUES = list(KEYS.values())
+
+
+def get_key_name(value):
+    keys = {v:k for k,v in KEYS.items()}
+    return keys[value]
+
+
+isRalt = False
+
+
+try:
+    path = '/dev/input/event20'
+    real_input = evdev.InputDevice(path)
+    print('using device:', real_input)
+    real_input.grab()
+
+    with uinput.Device(KEY_VALUES) as virtual_uinput:
+        for ev in real_input.read_loop():
+            type, code, value = 0x01, ev.code, ev.value
+            try:
+                # key press down event
+                if type == 1:
+                    # check for modifier key
+                    if code == uinput.KEY_RIGHTALT[1]:
+                        isRalt = value >= 1
+                    # do remapping here
+                    if isRalt:
+                        # remap alt + hjkl
+                        if code == uinput.KEY_K[1]:
+                            type, code = uinput.KEY_UP
+                        elif code == uinput.KEY_J[1]:
+                            type, code = uinput.KEY_DOWN
+                        elif code == uinput.KEY_H[1]:
+                            type, code = uinput.KEY_LEFT
+                        elif code == uinput.KEY_L[1]:
+                            type, code = uinput.KEY_RIGHT
+                        virtual_uinput.emit(uinput.KEY_RIGHTALT, 0)
+                    print(f'     type: {type}, code: {code}, value: {value}, isRalt: {isRalt}')
+                    virtual_uinput.emit((type, code), value)
+            except KeyboardInterrupt:
+                real_input.ungrab()
+                print(traceback.format_exc())
+                sys.exit(0)
+            
+except (OSError, PermissionError):
+    print("Must be run as sudo")
