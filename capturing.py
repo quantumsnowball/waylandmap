@@ -5,20 +5,16 @@ import uinput
 import logging
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 
 
-KEYS = {k:v
-        for k,v in uinput.__dict__.items() 
-        if k.startswith('KEY_')}
+EVENTS = {k:v for k,v in vars(uinput.ev).items() if k.startswith(('KEY_', 'BTN_', 'REL_', 'ABS_', ))}
+KEYS = {k:v for k,v in EVENTS.items() if k.startswith('KEY_')}
 
 
-KEY_VALUES = list(KEYS.values())
-
-
-def get_key_name(value):
-    keys = {v:k for k,v in KEYS.items()}
-    return keys[value]
+def get_event_name(value):
+    keys = {v:k for k,v in EVENTS.items()}
+    return keys.get(value, '')
 
 
 def main():
@@ -28,7 +24,7 @@ def main():
         print('using device:', kb)
         kb.grab()
 
-        with uinput.Device(KEY_VALUES) as vdev:
+        with uinput.Device(KEYS.values()) as vdev:
             # keep track of if alt is press in last loop
             isRalt = False
             for ev in kb.read_loop():
@@ -41,6 +37,9 @@ def main():
                         # check for modifier key
                         if code_in == uinput.KEY_RIGHTALT[1]:
                             isRalt = value_in >= 1
+                            # if right alt is pressed or on hold, stop the event passing
+                            # if isRalt: continue
+                            continue
                         # do remapping here
                         if isRalt:
                             # remap alt + hjkl
@@ -52,18 +51,32 @@ def main():
                                 type_out, code_out = uinput.KEY_LEFT
                             if code_in == uinput.KEY_L[1]:
                                 type_out, code_out = uinput.KEY_RIGHT
-                            # remap home + end
+                            # remap home + pgdn + pgup + end
                             if code_in == uinput.KEY_N[1]:
                                 type_out, code_out = uinput.KEY_HOME
                             if code_in == uinput.KEY_M[1]:
+                                type_out, code_out = uinput.KEY_PAGEDOWN
+                            if code_in == uinput.KEY_COMMA[1]:
+                                type_out, code_out = uinput.KEY_PAGEUP
+                            if code_in == uinput.KEY_DOT[1]:
                                 type_out, code_out = uinput.KEY_END
+                            # remap backspace + delete
+                            if code_in == uinput.KEY_Y[1]:
+                                type_out, code_out = uinput.KEY_BACKSPACE
+                            if code_in == uinput.KEY_U[1]:
+                                type_out, code_out = uinput.KEY_BACKSPACE
+                            if code_in == uinput.KEY_I[1]:
+                                type_out, code_out = uinput.KEY_DELETE
+                            if code_in == uinput.KEY_O[1]:
+                                type_out, code_out = uinput.KEY_DELETE
                             # fake the OS right alt key is released
-                            vdev.emit(uinput.KEY_RIGHTALT, 0)
-                        # send back all event
-                        vdev.emit((type_out, code_out), value_out)
-                    logging.debug(('-----\n'
-                        f'\ttype_in: {type_in}, \tcode_in: {code_in}, \tvalue: {value_in}, '
-                        f'\ttype_out: {type_out}, \tcode_out: {code_out}, \tvalue_out: {value_out}, \tisRalt: {isRalt}'))
+                            # vdev.emit(uinput.KEY_RIGHTALT, 0)
+                    # send back all event
+                    vdev.emit((type_out, code_out), value_out)
+                    # log
+                    logging.info((
+                        f'\tIN: ({get_event_name((type_in, code_in)):>15},T={type_in:1},C={code_in:3},V={value_in:6}), '
+                        f'\tOUT: ({get_event_name((type_out, code_out)):>15},T={type_out:1},C={code_out:3},V={value_out:6}), \tisRalt: {isRalt}'))
                 except KeyboardInterrupt:
                     kb.ungrab()
                     print(traceback.format_exc())
