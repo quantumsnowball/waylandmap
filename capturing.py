@@ -2,6 +2,10 @@ import sys
 import traceback
 import evdev
 import uinput
+import logging
+
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 KEYS = {k:v
@@ -29,34 +33,37 @@ def main():
             isRalt = False
             for ev in kb.read_loop():
                 # look at each event
-                type, code, value = ev.type, ev.code, ev.value
+                type_in, code_in, value_in = ev.type, ev.code, ev.value
+                type_out, code_out, value_out = type_in, code_in, value_in
                 try:
-                    # only change key press down event
-                    if type == 1:
+                    # only interested in key event, ignore sync event
+                    if type_in == 1:
                         # check for modifier key
-                        if code == uinput.KEY_RIGHTALT[1]:
-                            isRalt = value >= 1
+                        if code_in == uinput.KEY_RIGHTALT[1]:
+                            isRalt = value_in >= 1
                         # do remapping here
                         if isRalt:
                             # remap alt + hjkl
-                            if code == uinput.KEY_K[1]:
-                                type, code = uinput.KEY_UP
-                            if code == uinput.KEY_J[1]:
-                                type, code = uinput.KEY_DOWN
-                            if code == uinput.KEY_H[1]:
-                                type, code = uinput.KEY_LEFT
-                            if code == uinput.KEY_L[1]:
-                                type, code = uinput.KEY_RIGHT
+                            if code_in == uinput.KEY_K[1]:
+                                type_out, code_out = uinput.KEY_UP
+                            if code_in == uinput.KEY_J[1]:
+                                type_out, code_out = uinput.KEY_DOWN
+                            if code_in == uinput.KEY_H[1]:
+                                type_out, code_out = uinput.KEY_LEFT
+                            if code_in == uinput.KEY_L[1]:
+                                type_out, code_out = uinput.KEY_RIGHT
                             # remap home + end
-                            if code == uinput.KEY_N[1]:
-                                type, code = uinput.KEY_HOME
-                            if code == uinput.KEY_M[1]:
-                                type, code = uinput.KEY_END
+                            if code_in == uinput.KEY_N[1]:
+                                type_out, code_out = uinput.KEY_HOME
+                            if code_in == uinput.KEY_M[1]:
+                                type_out, code_out = uinput.KEY_END
                             # fake the OS right alt key is released
                             vdev.emit(uinput.KEY_RIGHTALT, 0)
-                        # print(f'\t\ttype: {type}, code: {code}, value: {value}, isRalt: {isRalt}')
-                        vdev.emit((type, code), value)
-                    print(f'\t\ttype: {type}, \tcode: {code}, \tvalue: {value}')
+                        # send back all event
+                        vdev.emit((type_out, code_out), value_out)
+                    logging.debug(('-----\n'
+                        f'\ttype_in: {type_in}, \tcode_in: {code_in}, \tvalue: {value_in}, '
+                        f'\ttype_out: {type_out}, \tcode_out: {code_out}, \tvalue_out: {value_out}, \tisRalt: {isRalt}'))
                 except KeyboardInterrupt:
                     kb.ungrab()
                     print(traceback.format_exc())
