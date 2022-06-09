@@ -4,6 +4,7 @@ import evdev
 import uinput
 import yaml
 import logging
+from filter import Filter
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -13,28 +14,19 @@ EVENTS = {k:v for k,v in vars(uinput.ev).items() if k.startswith(('KEY_', 'BTN_'
 KEYS = {k:v for k,v in EVENTS.items() if k.startswith('KEY_')}
 
 
-def get_event_name(value):
+def get_event_name(value: tuple) -> str:
     keys = {v:k for k,v in EVENTS.items()}
     return keys.get(value, '')
 
 
+def event_is_modifier(onMods: dict) -> bool:
+    return False
+
 def main():
-    # parse user config file
-    keymaps = None
-    with open('keymaps.yaml') as f:
-        keymaps = yaml.safe_load(f)
-    if not keymaps:
-        raise Exception('Error in reading user config file')
-    # organize into swap list and map list
-    swap_list = tuple((m['target1'], m['target2'])
-                       for m in keymaps if m['type'] == 'swap')
-    map_list = tuple((m['source'], m['target'])
-                      for m in keymaps if m['type'] == 'map')
-    combo_list = tuple((m['modifier'], m['source'], m['target'])
-                       for m in keymaps if m['type'] == 'combo')
+    filter = Filter('keymaps.yaml')
     # start capturing from evdev
     try:
-        path = '/dev/input/event21'
+        path = '/dev/input/event22'
         kb = evdev.InputDevice(path)
         kb.grab()
         logging.info('Device:', kb)
@@ -42,6 +34,7 @@ def main():
         with uinput.Device(KEYS.values()) as vdev:
             # keep track of if alt is press in last loop
             isRalt = False
+            # loop to capture every event
             for ev in kb.read_loop():
                 # look at each event
                 type_in, code_in, value_in = ev.type, ev.code, ev.value
