@@ -25,7 +25,13 @@ def main():
         keymaps = yaml.safe_load(f)
     if not keymaps:
         raise Exception('Error in reading user config file')
-    breakpoint()
+    # organize into swap list and map list
+    swap_list = tuple((m['target1'], m['target2'])
+                       for m in keymaps if m['type'] == 'swap')
+    map_list = tuple((m['source'], m['target'])
+                      for m in keymaps if m['type'] == 'map')
+    combo_list = tuple((m['modifier'], m['source'], m['target'])
+                       for m in keymaps if m['type'] == 'combo')
     # start capturing from evdev
     try:
         path = '/dev/input/event21'
@@ -78,8 +84,6 @@ def main():
                                 type_out, code_out = uinput.KEY_DELETE
                             if code_in == uinput.KEY_O[1]:
                                 type_out, code_out = uinput.KEY_DELETE
-                            # fake the OS right alt key is released
-                            # vdev.emit(uinput.KEY_RIGHTALT, 0)
                     # send back all event
                     vdev.emit((type_out, code_out), value_out)
                     # log

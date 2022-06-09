@@ -1,15 +1,14 @@
 # simply swap two single key
-- type: swap,
-  key1: KEY_CAPSLOCK,
-  key2: KEY_ESC
+- type: swap
+  target1: KEY_CAPSLOCK
+  target2: KEY_ESC
 # map one single key with another
-- type: map, 
-  from: KEY_LEFTALT,
-  to: KEY_LEFTCTRL
+- type: map
+  source: KEY_LEFTALT
+  target: KEY_LEFTCTRL
 # map 2-keys-chord into a new key
-- type: map, 
-  from: 
-    modifier: KEY_RIGHTALT,
-    key: KEY_K,
-  to: KEY_UP
+- type: combo 
+  modifier: KEY_RIGHTALT
+  source: KEY_K
+  target: KEY_UP
 # more key combo options is coming
