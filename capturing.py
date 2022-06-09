@@ -26,7 +26,7 @@ try:
     print('using device:', real_input)
     real_input.grab()
 
-    with uinput.Device(KEY_VALUES) as virtual_uinput:
+    with uinput.Device(KEY_VALUES) as vdev:
         for ev in real_input.read_loop():
             type, code, value = 0x01, ev.code, ev.value
             try:
@@ -40,19 +40,25 @@ try:
                         # remap alt + hjkl
                         if code == uinput.KEY_K[1]:
                             type, code = uinput.KEY_UP
-                        elif code == uinput.KEY_J[1]:
+                        if code == uinput.KEY_J[1]:
                             type, code = uinput.KEY_DOWN
-                        elif code == uinput.KEY_H[1]:
+                        if code == uinput.KEY_H[1]:
                             type, code = uinput.KEY_LEFT
-                        elif code == uinput.KEY_L[1]:
+                        if code == uinput.KEY_L[1]:
                             type, code = uinput.KEY_RIGHT
-                        virtual_uinput.emit(uinput.KEY_RIGHTALT, 0)
-                    print(f'     type: {type}, code: {code}, value: {value}, isRalt: {isRalt}')
-                    virtual_uinput.emit((type, code), value)
+                        # remap home + end
+                        if code == uinput.KEY_N[1]:
+                            type, code = uinput.KEY_HOME
+                        if code == uinput.KEY_M[1]:
+                            type, code = uinput.KEY_END
+                        vdev.emit(uinput.KEY_RIGHTALT, 0)
+                    print(f'\t\ttype: {type}, code: {code}, value: {value}, isRalt: {isRalt}')
+                    vdev.emit((type, code), value)
             except KeyboardInterrupt:
                 real_input.ungrab()
                 print(traceback.format_exc())
                 sys.exit(0)
             
-except (OSError, PermissionError):
+except (PermissionError, ):
     print("Must be run as sudo")
+
