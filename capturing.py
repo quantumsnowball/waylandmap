@@ -17,48 +17,55 @@ def get_key_name(value):
     return keys[value]
 
 
-isRalt = False
+def main():
+    try:
+        path = '/dev/input/event20'
+        kb = evdev.InputDevice(path)
+        print('using device:', kb)
+        kb.grab()
+
+        with uinput.Device(KEY_VALUES) as vdev:
+            # keep track of if alt is press in last loop
+            isRalt = False
+            for ev in kb.read_loop():
+                # look at each event
+                type, code, value = ev.type, ev.code, ev.value
+                try:
+                    # only change key press down event
+                    if type == 1:
+                        # check for modifier key
+                        if code == uinput.KEY_RIGHTALT[1]:
+                            isRalt = value >= 1
+                        # do remapping here
+                        if isRalt:
+                            # remap alt + hjkl
+                            if code == uinput.KEY_K[1]:
+                                type, code = uinput.KEY_UP
+                            if code == uinput.KEY_J[1]:
+                                type, code = uinput.KEY_DOWN
+                            if code == uinput.KEY_H[1]:
+                                type, code = uinput.KEY_LEFT
+                            if code == uinput.KEY_L[1]:
+                                type, code = uinput.KEY_RIGHT
+                            # remap home + end
+                            if code == uinput.KEY_N[1]:
+                                type, code = uinput.KEY_HOME
+                            if code == uinput.KEY_M[1]:
+                                type, code = uinput.KEY_END
+                            # fake the OS right alt key is released
+                            vdev.emit(uinput.KEY_RIGHTALT, 0)
+                        # print(f'\t\ttype: {type}, code: {code}, value: {value}, isRalt: {isRalt}')
+                        vdev.emit((type, code), value)
+                    print(f'\t\ttype: {type}, \tcode: {code}, \tvalue: {value}')
+                except KeyboardInterrupt:
+                    kb.ungrab()
+                    print(traceback.format_exc())
+                    sys.exit(0)
+                
+    except (PermissionError, ):
+        print("Must be run as sudo")
 
 
-try:
-    path = '/dev/input/event20'
-    real_input = evdev.InputDevice(path)
-    print('using device:', real_input)
-    real_input.grab()
-
-    with uinput.Device(KEY_VALUES) as vdev:
-        for ev in real_input.read_loop():
-            type, code, value = 0x01, ev.code, ev.value
-            try:
-                # key press down event
-                if type == 1:
-                    # check for modifier key
-                    if code == uinput.KEY_RIGHTALT[1]:
-                        isRalt = value >= 1
-                    # do remapping here
-                    if isRalt:
-                        # remap alt + hjkl
-                        if code == uinput.KEY_K[1]:
-                            type, code = uinput.KEY_UP
-                        if code == uinput.KEY_J[1]:
-                            type, code = uinput.KEY_DOWN
-                        if code == uinput.KEY_H[1]:
-                            type, code = uinput.KEY_LEFT
-                        if code == uinput.KEY_L[1]:
-                            type, code = uinput.KEY_RIGHT
-                        # remap home + end
-                        if code == uinput.KEY_N[1]:
-                            type, code = uinput.KEY_HOME
-                        if code == uinput.KEY_M[1]:
-                            type, code = uinput.KEY_END
-                        vdev.emit(uinput.KEY_RIGHTALT, 0)
-                    print(f'\t\ttype: {type}, code: {code}, value: {value}, isRalt: {isRalt}')
-                    vdev.emit((type, code), value)
-            except KeyboardInterrupt:
-                real_input.ungrab()
-                print(traceback.format_exc())
-                sys.exit(0)
-            
-except (PermissionError, ):
-    print("Must be run as sudo")
+if __name__ == '__main__':
+    main()
 
