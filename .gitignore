@@ -1,0 +1,6 @@
+.python-version
+pyrightconfig.json
+__pycache__/
+waylandmap.egg-info/
+build/
+dist/
