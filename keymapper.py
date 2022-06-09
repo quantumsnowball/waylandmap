@@ -5,7 +5,7 @@ import uinput
 import logging
 
 
-logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 EVENTS = {k:v for k,v in vars(uinput.ev).items() if k.startswith(('KEY_', 'BTN_', 'REL_', 'ABS_', ))}
@@ -21,8 +21,8 @@ def main():
     try:
         path = '/dev/input/event20'
         kb = evdev.InputDevice(path)
-        print('using device:', kb)
         kb.grab()
+        logging.info('Device:', kb)
 
         with uinput.Device(KEYS.values()) as vdev:
             # keep track of if alt is press in last loop
@@ -36,9 +36,9 @@ def main():
                     if type_in == 1:
                         # check for modifier key
                         if code_in == uinput.KEY_RIGHTALT[1]:
+                            # key mapper will record that the status of right alt
                             isRalt = value_in >= 1
-                            # if right alt is pressed or on hold, stop the event passing
-                            # if isRalt: continue
+                            # right alt key events are blocked
                             continue
                         # do remapping here
                         if isRalt:
@@ -79,11 +79,11 @@ def main():
                         f'\tOUT: ({get_event_name((type_out, code_out)):>15},T={type_out:1},C={code_out:3},V={value_out:6}), \tisRalt: {isRalt}'))
                 except KeyboardInterrupt:
                     kb.ungrab()
-                    print(traceback.format_exc())
+                    logging.error(traceback.format_exc())
                     sys.exit(0)
                 
     except (PermissionError, ):
-        print("Must be run as sudo")
+        logging.error("Must be run as sudo")
 
 
 if __name__ == '__main__':
