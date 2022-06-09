@@ -2,6 +2,7 @@ import sys
 import traceback
 import evdev
 import uinput
+import yaml
 import logging
 
 
@@ -18,8 +19,16 @@ def get_event_name(value):
 
 
 def main():
+    # parse user config file
+    keymaps = None
+    with open('keymaps.yaml') as f:
+        keymaps = yaml.safe_load(f)
+    if not keymaps:
+        raise Exception('Error in reading user config file')
+    breakpoint()
+    # start capturing from evdev
     try:
-        path = '/dev/input/event20'
+        path = '/dev/input/event21'
         kb = evdev.InputDevice(path)
         kb.grab()
         logging.info('Device:', kb)
