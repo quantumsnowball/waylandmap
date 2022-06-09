@@ -7,9 +7,6 @@ from waylandmap.filter import Filter
 from waylandmap.constants import KEYS_VALUE_TUPLE, code_to_name
 
 
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-
-
 def run(device, keymaps):
     filter = Filter(keymaps)
     # start capturing from evdev
