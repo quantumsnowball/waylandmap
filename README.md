@@ -27,6 +27,15 @@ The program accept a config file path as argument. The config file should be in 
 ```yaml
 # keymaps.yaml
 
+# simply swap two single key (to be implemented)
+- type: swap
+  target1: KEY_CAPSLOCK
+  target2: KEY_ESC
+# map one single key with another (to be implemented)
+- type: map
+  source: KEY_LEFTALT
+  target: KEY_LEFTCTRL
+# map 2-keys-chord into a new key
 # # RightAlt + hjkl to arrows
 - type: combo 
   modifier: KEY_RIGHTALT
@@ -44,6 +53,41 @@ The program accept a config file path as argument. The config file should be in 
   modifier: KEY_RIGHTALT
   source: KEY_L
   target: KEY_RIGHT
+# # remap home + pgdn + pgup + end
+- type: combo 
+  modifier: KEY_RIGHTALT
+  source: KEY_N
+  target: KEY_HOME
+- type: combo 
+  modifier: KEY_RIGHTALT
+  source: KEY_M
+  target: KEY_PAGEDOWN
+- type: combo 
+  modifier: KEY_RIGHTALT
+  source: KEY_COMMA
+  target: KEY_PAGEUP
+- type: combo 
+  modifier: KEY_RIGHTALT
+  source: KEY_DOT
+  target: KEY_END
+# # remap backspace + delete
+- type: combo 
+  modifier: KEY_RIGHTALT
+  source: KEY_Y
+  target: KEY_BACKSPACE
+- type: combo 
+  modifier: KEY_RIGHTALT
+  source: KEY_U
+  target: KEY_BACKSPACE
+- type: combo 
+  modifier: KEY_RIGHTALT
+  source: KEY_I
+  target: KEY_DELETE
+- type: combo 
+  modifier: KEY_RIGHTALT
+  source: KEY_O
+  target: KEY_DELETE
+# more key combo options is coming
 
 ```
 
