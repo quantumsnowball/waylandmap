@@ -1,5 +1,5 @@
 import yaml
-from constants import name_to_code as ntc
+from waylandmap.constants import name_to_code as ntc
 
 
 class Filter:

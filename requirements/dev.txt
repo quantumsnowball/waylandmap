@@ -1,0 +1,5 @@
+evdev
+python-uinput
+click
+pyyaml
+grip

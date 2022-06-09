@@ -3,19 +3,18 @@ import traceback
 import evdev
 import uinput
 import logging
-from filter import Filter
-from constants import KEYS_VALUE_TUPLE, code_to_name
+from waylandmap.filter import Filter
+from waylandmap.constants import KEYS_VALUE_TUPLE, code_to_name
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
-def main():
-    filter = Filter('keymaps.yaml')
+def run(device, keymaps):
+    filter = Filter(keymaps)
     # start capturing from evdev
     try:
-        path = '/dev/input/event20'
-        kb = evdev.InputDevice(path)
+        kb = evdev.InputDevice(device)
         kb.grab()
 
         with uinput.Device(KEYS_VALUE_TUPLE) as vdev:
@@ -46,8 +45,4 @@ def main():
                 
     except (PermissionError, ):
         logging.error("Must be run as sudo")
-
-
-if __name__ == '__main__':
-    main()
 
