@@ -1,0 +1,11 @@
+[Unit]
+Description=WaylandMap
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/path/to/your/waylandmap -n <your-keyboard-name> /path/to/your/keymaps.yaml
+
+[Install]
+WantedBy=multi-user.target

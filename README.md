@@ -93,8 +93,10 @@ The program accept a config file path as argument. The config file should be in 
 
 ## Install as Linux system services
 
-After writing your config file and test running it without problem, your can install the program as a system services. This should w automatically start the keymapper when you login.
+After writing your config file and test running it without problem, your can install the program as a system services. This should automatically start the keymapper everytime when you login. You may use `systemctl/waylandmap.service` as a template to edit the services file, and then install the service as follows:
 
 ```
-TODO
+sudo cp systemctl/waylandmap.service /etc/systemd/system/
+sudo systemctl enable waylandmap.service
 ```
+
