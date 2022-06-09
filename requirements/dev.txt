@@ -3,3 +3,4 @@ python-uinput
 click
 pyyaml
 grip
+twine

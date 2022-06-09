@@ -5,6 +5,7 @@ import uinput
 import logging
 from waylandmap.filter import Filter
 from waylandmap.constants import KEYS_VALUE_TUPLE, code_to_name
+from waylandmap.devices import get_device_path
 
 
 def infinite_retry(sleep, catch):
@@ -24,10 +25,10 @@ def infinite_retry(sleep, catch):
 
 @infinite_retry(sleep=1, 
                 catch=(FileNotFoundError, OSError, Exception))
-def run(device, keymaps):
+def run(dev_name, keymaps):
     filter = Filter(keymaps)
     # start capturing from evdev
-    kb = evdev.InputDevice(device)
+    kb = evdev.InputDevice(get_device_path(dev_name))
     kb.grab()
 
     try:

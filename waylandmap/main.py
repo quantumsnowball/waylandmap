@@ -29,7 +29,7 @@ def cli(list_devices, name, keymaps, verbose):
         devs = get_devices()
         for dev in devs:
             if name == dev.name:
-                dev_path = dev.path
+                dev_name = dev.name
                 break
         else:
             print('Name of devices does not exists. Please check your device name.')
@@ -42,5 +42,5 @@ def cli(list_devices, name, keymaps, verbose):
     logging.basicConfig(format='%(message)s',
                         level=logging.DEBUG if verbose else logging.WARNING)
     # finally run the program
-    run(dev_path, keymaps)
+    run(dev_name, keymaps)
 
