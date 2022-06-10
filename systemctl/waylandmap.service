@@ -5,7 +5,10 @@ After=multi-user.target
 [Service]
 Type=simple
 Restart=always
+RestartSec=5
 ExecStart=/path/to/your/waylandmap -n <your-keyboard-name> /path/to/your/keymaps.yaml
+User=root
+Group=root
 
 [Install]
 WantedBy=multi-user.target
