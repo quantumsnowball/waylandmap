@@ -14,12 +14,6 @@ class Filter:
         self._combo = tuple((ntc(m['modifier']), ntc(m['source']), ntc(m['target']))
                             for m in keymaps if m['type'] == 'combo')
         self._on_mods = {k[0]:False for k in self._combo}
-        # self._mod_tree = { for c in self._combo}
-        d = {}
-        for c in self._combo:
-            pth = []
-            pth.append((c[1], c[2]))
-            d[c] = pth
 
     def target(self, type_in: int, code_in: int, value_in: int) -> tuple | None:
         type_out, code_out, value_out = type_in, code_in, value_in
