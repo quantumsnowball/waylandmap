@@ -1,3 +1,4 @@
+from evdev.ecodes import EV_KEY
 import yaml
 from waylandmap.constants import name_to_code as ntc
 
@@ -14,11 +15,12 @@ class Filter:
         self._combo = tuple((ntc(m['modifier']), ntc(m['source']), ntc(m['target']))
                             for m in keymaps if m['type'] == 'combo')
         self._on_mods = {k[0]:False for k in self._combo}
+        # self._on_remap_path = {c:False for c in self._combo}
 
     def target(self, type_in: int, code_in: int, value_in: int) -> tuple | None:
         type_out, code_out, value_out = type_in, code_in, value_in
         # only interested in key event, ignore sync event
-        if type_in == 1:
+        if type_in == EV_KEY:
             # check if input is a modifier key
             if code_in in self._on_mods:
                 # if confirm, change on_mods state
@@ -26,7 +28,8 @@ class Filter:
                 # then issue discard signal
                 return None
             # check all registered mods tree and trigger
-            for modifier, source, target in self._combo:
+            for remap_path in self._combo:
+                modifier, source, target = remap_path
                 # check if modifier is on
                 if self._on_mods[modifier]:
                     # check if key pressed matched source

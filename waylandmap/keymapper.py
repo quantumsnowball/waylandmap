@@ -18,9 +18,12 @@ def log_input_output(input, output=None):
         # if discarded by filter
         name_out = type_out = code_out = value_out = ''
     # log
-    logging.info((
-        f'\tIN: ({name_in:>15},T={type_in:1},C={code_in:3},V={value_in:6}), '
-        f'\tOUT: ({name_out:>15},T={type_out:1},C={code_out:3},V={value_out:6})'))
+    if type_in == 0:
+        logging.info('\t---- SYNC_REPORT ----')
+    else:
+        logging.info((
+            f'\tIN: ({name_in:>15},T={type_in:1},C={code_in:3},V={value_in:6}), '
+            f'\tOUT: ({name_out:>15},T={type_out:1},C={code_out:3},V={value_out:6})'))
 
 
 def infinite_retry(sleep, catch):
