@@ -100,3 +100,6 @@ sudo cp systemctl/waylandmap.service /etc/systemd/system/
 sudo systemctl enable waylandmap.service
 ```
 
+## Warning
+
+Due to the design of the program, once a modifier key has been registered as part of a combo, its events will no longer visible to the O.S. Essentially, this modifier key is disabled system-wide. 
