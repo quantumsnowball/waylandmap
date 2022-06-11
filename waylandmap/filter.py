@@ -8,10 +8,10 @@ class Filter:
         with open(path) as f:
             keymaps = yaml.safe_load(f)
         # organize into swap list and map list
-        self._swap = tuple((ntc(m['target1']), ntc(m['target2']))
-                           for m in keymaps if m['type'] == 'swap')
         self._map = tuple((ntc(m['source']), ntc(m['target']))
                           for m in keymaps if m['type'] == 'map')
+        self._swap = tuple((ntc(m['target1']), ntc(m['target2']))
+                           for m in keymaps if m['type'] == 'swap')
         self._combo = tuple((ntc(m['modifier']), ntc(m['source']), ntc(m['target']))
                             for m in keymaps if m['type'] == 'combo')
         # modifier keys states
