@@ -23,6 +23,23 @@ class Filter:
         type_out, code_out, value_out = type_in, code_in, value_in
         # only interested in key event, ignore sync event
         if type_in == EV_KEY:
+            # handle map
+            for map in self._map:
+                source, target = map
+                if code_in == source:
+                    code_out = target
+                    return ((type_out, code_out), value_out)
+            # handle swap
+            for swap in self._swap:
+                target1, target2 = swap
+                if code_in == target1:
+                    code_out = target2
+                    return ((type_out, code_out), value_out)
+                if code_in == target2:
+                    code_out = target1
+                    return ((type_out, code_out), value_out)
+
+            ## handle combo
             # check if input is a modifier key
             if code_in in self._on_modifier:
                 # if confirm, change on_mods state
@@ -41,7 +58,7 @@ class Filter:
                         # mark remap path flag to on, only turn off upon key release event
                         self._on_combo[remap_path] = value_in >= 1
                         # only need to match the first path
-                        break
+                        return ((type_out, code_out), value_out)
         # unless is a registered modifier key, always return a valid result
         return ((type_out, code_out), value_out)
 
