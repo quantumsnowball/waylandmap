@@ -3,13 +3,14 @@ import time
 import evdev
 import uinput
 import logging
+import traceback
 from waylandmap.filter import Filter
 from waylandmap.constants import KEYS_VALUE_TUPLE, code_to_name
 from waylandmap.devices import get_device_path
 
 
 def log_input_output(input, output=None):
-    type_in, code_in, value_in = input
+    timestamp_in, type_in, code_in, value_in = input
     name_in = code_to_name(code_in) if type_in == 1 else ''
     if output is not None:
         (type_out, code_out), value_out = output
@@ -19,9 +20,10 @@ def log_input_output(input, output=None):
         name_out = type_out = code_out = value_out = ''
     # log
     if type_in == 0:
-        logging.info('\t---- SYNC_REPORT ----')
+        logging.info(f'\rtime: {timestamp_in}\t---- SYNC_REPORT ----')
     else:
         logging.info((
+            f'\rtime: {timestamp_in}'
             f'\tIN: ({name_in:>15},T={type_in:1},C={code_in:3},V={value_in:6}), '
             f'\tOUT: ({name_out:>15},T={type_out:1},C={code_out:3},V={value_out:6})'))
 
@@ -36,6 +38,7 @@ def infinite_retry(sleep, catch):
                     logging.error("Must be run as sudo")
                 except catch as e:
                     logging.error(f'{str(e)}: Failed to connect to device, possibly due to wake from sleep, will keep retrying ...')
+                    logging.error(traceback.format_exc())
                     time.sleep(sleep)
         return wrapped
     return wrapper
@@ -54,7 +57,7 @@ def run(dev_name, keymaps):
             # loop to capture every event
             for ev in kb.read_loop():
                 # each event represented by three ints
-                type_in, code_in, value_in = input = ev.type, ev.code, ev.value
+                _, type_in, code_in, value_in = input = ev.timestamp(), ev.type, ev.code, ev.value
                 # ask filter to for correct mapping
                 output = filter.target(type_in, code_in, value_in)
                 # this key is a registered modifier key
