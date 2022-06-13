@@ -24,17 +24,24 @@ sudo waylandmap --debug -n <name-of-your-keyboard> <path/to/config.yml>
 
 ## Configuration
 The program accept a config file path as argument. The config file should be in yaml format.
+
 ```yaml
 # keymaps.yaml
 
-# simply swap two single key (to be implemented)
-- type: swap
-  target1: KEY_CAPSLOCK
-  target2: KEY_ESC
-# map one single key with another (to be implemented)
+# map one single key with another
 - type: map
   source: KEY_LEFTALT
   target: KEY_LEFTCTRL
+- type: map
+  source: KEY_LEFTMETA
+  target: KEY_LEFTALT
+- type: map
+  source: KEY_LEFTCTRL
+  target: KEY_LEFTMET
+# simply swap two single key
+- type: swap
+  target1: KEY_CAPSLOCK
+  target2: KEY_ESC
 # map 2-keys-chord into a new key
 # # RightAlt + hjkl to arrows
 - type: combo 

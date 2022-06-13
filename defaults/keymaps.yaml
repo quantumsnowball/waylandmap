@@ -2,6 +2,12 @@
 - type: map
   source: KEY_LEFTALT
   target: KEY_LEFTCTRL
+- type: map
+  source: KEY_LEFTMETA
+  target: KEY_LEFTALT
+- type: map
+  source: KEY_LEFTCTRL
+  target: KEY_LEFTMET
 # simply swap two single key
 - type: swap
   target1: KEY_CAPSLOCK
