@@ -3,6 +3,7 @@ import time
 import evdev
 import uinput
 import logging
+import traceback
 from waylandmap.filter import Filter
 from waylandmap.constants import KEYS_VALUE_TUPLE, code_to_name
 from waylandmap.devices import get_device_path
@@ -36,6 +37,7 @@ def infinite_retry(sleep, catch):
                     logging.error("Must be run as sudo")
                 except catch as e:
                     logging.error(f'{str(e)}: Failed to connect to device, possibly due to wake from sleep, will keep retrying ...')
+                    logging.error(traceback.format_exc())
                     time.sleep(sleep)
         return wrapped
     return wrapper

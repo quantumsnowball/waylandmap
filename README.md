@@ -24,17 +24,24 @@ sudo waylandmap --debug -n <name-of-your-keyboard> <path/to/config.yml>
 
 ## Configuration
 The program accept a config file path as argument. The config file should be in yaml format.
+
 ```yaml
 # keymaps.yaml
 
-# simply swap two single key (to be implemented)
-- type: swap
-  target1: KEY_CAPSLOCK
-  target2: KEY_ESC
-# map one single key with another (to be implemented)
+# map one single key with another
 - type: map
   source: KEY_LEFTALT
   target: KEY_LEFTCTRL
+- type: map
+  source: KEY_LEFTMETA
+  target: KEY_LEFTALT
+- type: map
+  source: KEY_LEFTCTRL
+  target: KEY_LEFTMETA
+# simply swap two single key
+- type: swap
+  target1: KEY_CAPSLOCK
+  target2: KEY_ESC
 # map 2-keys-chord into a new key
 # # RightAlt + hjkl to arrows
 - type: combo 
@@ -102,4 +109,4 @@ sudo systemctl enable waylandmap.service
 
 ## Warning
 
-Due to the design of the program, once a modifier key has been registered as part of a combo, its events will no longer visible to the O.S. Essentially, this modifier key is disabled system-wide. 
+Due to the design of the program, once a modifier key has been registered as part of a combo, its events will no longer visible to the O.S. Essentially, this modifier key is disabled system-wide. By default, the program will first handle `map`, then `swap`, and finally the `combo`. No remapping is done in any rules, therefore, if there are multiple rules applicable to the same key, only the first matched rule will be handled.
