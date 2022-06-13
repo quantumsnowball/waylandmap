@@ -109,4 +109,4 @@ sudo systemctl enable waylandmap.service
 
 ## Warning
 
-Due to the design of the program, once a modifier key has been registered as part of a combo, its events will no longer visible to the O.S. Essentially, this modifier key is disabled system-wide. 
+Due to the design of the program, once a modifier key has been registered as part of a combo, its events will no longer visible to the O.S. Essentially, this modifier key is disabled system-wide. By default, the program will first handle `map`, then `swap`, and finally the `combo`. No remapping is done in any rules, therefore, if there are multiple rules applicable to the same key, only the first matched rule will be handled.
