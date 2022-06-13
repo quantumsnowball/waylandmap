@@ -7,7 +7,7 @@ with open('README.md', 'r') as f:
 setup(
     name='waylandmap',
     packages=['waylandmap', ],
-    version='1.0.1',
+    version='1.1.0',
     description='A keymapper that works under both X11 or Wayland',
     long_description=long_description,
     long_description_content_type='text/markdown',
