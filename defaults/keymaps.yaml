@@ -7,7 +7,7 @@
   target: KEY_LEFTALT
 - type: map
   source: KEY_LEFTCTRL
-  target: KEY_LEFTMET
+  target: KEY_LEFTMETA
 # simply swap two single key
 - type: swap
   target1: KEY_CAPSLOCK

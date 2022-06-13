@@ -37,7 +37,7 @@ The program accept a config file path as argument. The config file should be in 
   target: KEY_LEFTALT
 - type: map
   source: KEY_LEFTCTRL
-  target: KEY_LEFTMET
+  target: KEY_LEFTMETA
 # simply swap two single key
 - type: swap
   target1: KEY_CAPSLOCK
