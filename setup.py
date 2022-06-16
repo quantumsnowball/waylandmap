@@ -16,11 +16,10 @@ setup(
     url='https://github.com/quantumsnowball/waylandmap',
     keywords=['wayland', 'keymappers', 'evdev', 'python-uinput', ],
     python_requires='>=3.6',
-    install_requires=['click', 'evdev', 'python-uinput', 'pyyaml' ],
+    install_requires=['click', 'evdev', 'python-uinput', 'pyyaml'],
     entry_points={
         'console_scripts': [
             'waylandmap=waylandmap.main:cli',
         ]
     }
 )
-

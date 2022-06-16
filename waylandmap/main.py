@@ -43,4 +43,3 @@ def cli(list_devices, name, keymaps, verbose):
                         level=logging.DEBUG if verbose else logging.WARNING)
     # finally run the program
     run(dev_name, keymaps)
-

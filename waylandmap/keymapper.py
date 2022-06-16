@@ -37,14 +37,15 @@ def infinite_retry(sleep, catch):
                 except PermissionError:
                     logging.error("Must be run as sudo")
                 except catch as e:
-                    logging.error(f'{str(e)}: Failed to connect to device, possibly due to wake from sleep, will keep retrying ...')
+                    logging.error(
+                        f'{str(e)}: Failed to connect to device, possibly due to wake from sleep, will keep retrying ...')
                     logging.error(traceback.format_exc())
                     time.sleep(sleep)
         return wrapped
     return wrapper
 
 
-@infinite_retry(sleep=1, 
+@infinite_retry(sleep=1,
                 catch=(FileNotFoundError, OSError, Exception))
 def run(dev_name, keymaps):
     filter = Filter(keymaps)
@@ -74,4 +75,3 @@ def run(dev_name, keymaps):
         kb.ungrab()
         logging.error('User keyboard interrupted, quitting now.')
         sys.exit(0)
-
