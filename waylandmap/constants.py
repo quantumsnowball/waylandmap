@@ -1,7 +1,7 @@
 import uinput
 
 # {'ITEM_XXX': (0,0)}
-EVENTS_NAME_VALUE_DICT = {
+EVENTS_NAME_VALUE_DICT: dict[str, tuple[int, int]] = {
     k: v for k, v in vars(uinput.ev).items()
     if k.startswith(('KEY_', 'BTN_', 'REL_', 'ABS_', ))}
 

@@ -1,10 +1,11 @@
 from evdev.ecodes import EV_KEY
 import yaml
 from waylandmap.constants import name_to_code as ntc
+from waylandmap.types import FilterOutput
 
 
 class Filter:
-    def __init__(self, path: str):
+    def __init__(self, path: str) -> None:
         with open(path) as f:
             keymaps = yaml.safe_load(f)
         # organize into swap list and map list
@@ -19,7 +20,7 @@ class Filter:
         # mapping path states
         self._on_combo = {c: False for c in self._combo}
 
-    def target(self, type_in: int, code_in: int, value_in: int) -> tuple | None:
+    def target(self, type_in: int, code_in: int, value_in: int) -> FilterOutput:
         type_out, code_out, value_out = type_in, code_in, value_in
         # only interested in key event, ignore sync event
         if type_in == EV_KEY:

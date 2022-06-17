@@ -9,7 +9,7 @@ from waylandmap.keymapper import run
 @click.option('-n', '--name', default=None, help='Name of the target keyboard.')
 @click.argument('keymaps', nargs=1, required=False, default=None)
 @click.option('-v', '--verbose', is_flag=True, default=False, help='Print live event mapping info to terminal.')
-def cli(list_devices, name, keymaps, verbose):
+def cli(list_devices: bool, name: str | None, keymaps: str | None, verbose: bool) -> None:
     """KEYMAPS is the path to your config yaml file"""
     # show available devices
     if list_devices:

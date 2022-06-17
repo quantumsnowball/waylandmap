@@ -1,12 +1,12 @@
 import evdev
 
 
-def get_devices() -> list:
+def get_devices() -> list[evdev.InputDevice]:
     devices = [evdev.InputDevice(dev) for dev in evdev.list_devices()]
     return devices
 
 
-def get_device_path(name):
+def get_device_path(name: str) -> str:
     for dev in get_devices():
         if name == dev.name:
             return dev.path

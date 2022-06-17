@@ -7,9 +7,10 @@ import traceback
 from waylandmap.filter import Filter
 from waylandmap.constants import KEYS_VALUE_TUPLE, code_to_name
 from waylandmap.devices import get_device_path
+from waylandmap.types import LogInput, LogOutput, RetryCatch, RetryWrapper, RetryWrapped
 
 
-def log_input_output(input, output=None):
+def log_input_output(input: LogInput, output: LogOutput = None) -> None:
     timestamp_in, type_in, code_in, value_in = input
     name_in = code_to_name(code_in) if type_in == 1 else ''
     if output is not None:
@@ -28,9 +29,9 @@ def log_input_output(input, output=None):
             f'\tOUT: ({name_out:>15},T={type_out:1},C={code_out:3},V={value_out:6})'))
 
 
-def infinite_retry(sleep, catch):
-    def wrapper(func):
-        def wrapped(*args, **kwargs):
+def infinite_retry(sleep: int, catch: RetryCatch) -> RetryWrapper:
+    def wrapper(func) -> RetryWrapped:
+        def wrapped(*args, **kwargs) -> None:
             while True:
                 try:
                     func(*args, **kwargs)
@@ -47,7 +48,7 @@ def infinite_retry(sleep, catch):
 
 @infinite_retry(sleep=1,
                 catch=(FileNotFoundError, OSError, Exception))
-def run(dev_name, keymaps):
+def run(dev_name: str, keymaps: str) -> None:
     filter = Filter(keymaps)
     # start capturing from evdev
     kb = evdev.InputDevice(get_device_path(dev_name))
